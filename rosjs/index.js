@@ -7,38 +7,38 @@ ws.on('open', function open () {
   console.log('Connection open')
   const subscribe = JSON.stringify({
     'op': 'subscribe',
-    'topic': '/turtle1/pose'
+    'topic': '/festo/cobotv1_1/festo_status'
   })
-  ws.send(subscribe)
+  // ws.send(subscribe)
 })
 
 ws.on('message', function incoming (data) {
   console.log(data)
 })
 
-function moveTurtle (ws, x) {
-  const cmd = JSON.stringify({
-    'op': 'publish',
-    'topic': '/turtle1/cmd_vel',
-    'msg': {
-      'linear': {
-        'x': x,
-        'y': 5.0,
-        'z': 5.0
-      },
-      'angular': {
-        'x': 5.0,
-        'y': 5.0,
-        'z': 5.0
+function closeTool (closed) {
+  const cmd = JSON.stringify(
+    { 'op': 'call_service',
+      'service': '/festo/cobotv1_1/set_pressure',
+      'args': {
+        'required_pressure': {
+          'sequence': 0,
+          'p1': closed ? 1.0 : -1.0,
+          'p2': 0.0,
+          'weight': 0.1
+        }
       }
-    }
-  })
+    })
   ws.send(cmd)
+  console.log(cmd)
 }
 
-let turtleX = 0
+process.stdin.on('data', d => {
+  console.log(d)
+})
 
+let status = false
 setInterval(() => {
-  moveTurtle(ws, turtleX)
-  turtleX++
-}, 50)
+  closeTool(status)
+  status = !status
+}, 1000)
