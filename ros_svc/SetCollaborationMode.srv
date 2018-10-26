@@ -1,0 +1,9 @@
+int32 TO_BALANCER = 1
+int32 HOLD_POSITION = 2
+int32 CONTINUE_PROGRAM = 3
+int32 WAIT_FOR_NUDGE = 4
+int32 PICK = 5
+
+int32 sequence
+float32 stiffness_on_collision
+int32 collision_mode

@@ -1,0 +1,8 @@
+int32 screen_nr
+bool  camera_on
+bool  screen_on
+string text_collum1
+string text_collum2
+string text_collum3
+---
+bool result

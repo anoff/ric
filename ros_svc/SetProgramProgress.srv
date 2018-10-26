@@ -1,0 +1,3 @@
+festo_msgs/ProgramProgressMsg progress_msg
+---
+bool recieved

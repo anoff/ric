@@ -1,0 +1,3 @@
+festo_msgs/OutputMsg required_outputs
+---
+festo_msgs/OutputMsg current_outputs

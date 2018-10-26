@@ -1,0 +1,9 @@
+geometry_msgs/Pose pose
+float32   velocity_factor
+float32   acceleration_factor
+bool      relative_position
+string    coordinate_system
+float32   time_factor
+---
+bool position_reached
+string error_description

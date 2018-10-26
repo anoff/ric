@@ -1,0 +1,3 @@
+festo_msgs/PressureMsg required_pressure
+---
+festo_msgs/PressureMsg current_pressure

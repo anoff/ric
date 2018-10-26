@@ -1,0 +1,6 @@
+float32 duration_scaling
+float32 stiffness_scaling
+float32 velocity_scaling
+float32 acceleration_scaling
+---
+bool result

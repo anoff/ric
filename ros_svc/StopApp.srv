@@ -1,0 +1,3 @@
+---
+bool app_stopped
+string result

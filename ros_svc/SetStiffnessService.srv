@@ -1,0 +1,3 @@
+festo_msgs/StiffnessMsg required_stiffness
+---
+festo_msgs/StiffnessMsg current_stiffness

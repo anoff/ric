@@ -1,0 +1,3 @@
+festo_msgs/ModeMsg required_mode
+---
+festo_msgs/ModeMsg current_mode

@@ -1,0 +1,8 @@
+float32[] joint_increment
+float32   velocity_factor
+float32   acceleration_factor
+float32   time_factor
+bool      relative_position
+---
+bool position_reached
+string error_descriptions
