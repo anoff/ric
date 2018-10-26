@@ -1,5 +1,25 @@
 @startuml
 skinparam monochrome true
-node "Robot" as robot
 
+node "Robot" as robot
+node "VTEM" as vtem
+frame "Robot Server" as rs {
+  node "ROS" as ros
+  file "<size:10>192.168.4.44" as rs_ip
+}
+
+frame "Simulator VM" as vm {
+  node "ROS" as rosvm
+  file "<size:10>192.168.56.101" as vm_ip
+}
+
+
+node "Client Code" as client #orange
+
+rs -down- client: ros_bridge\nvia LAN
+client -down- vm: ros_bridge\nvia bridged network VM
+robot -up- vtem: pneumatic\ntubes
+vtem - rs: ethernet
+
+rs -[hidden]down- vm
 @enduml

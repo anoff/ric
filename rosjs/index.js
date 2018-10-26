@@ -3,7 +3,7 @@ const argv = require('minimist')(process.argv.slice(2))
 
 const ws = new WebSocket('ws://' + argv.ros_master + ':9090/')
 
-ws.on('open', function open() {
+ws.on('open', function open () {
   console.log('Connection open')
   const subscribe = JSON.stringify({
     'op': 'subscribe',
@@ -12,11 +12,11 @@ ws.on('open', function open() {
   ws.send(subscribe)
 })
 
-ws.on('message', function incoming(data) {
+ws.on('message', function incoming (data) {
   console.log(data)
 })
 
-function move_turtle(ws, x) {
+function moveTurtle (ws, x) {
   const cmd = JSON.stringify({
     'op': 'publish',
     'topic': '/turtle1/cmd_vel',
@@ -35,3 +35,10 @@ function move_turtle(ws, x) {
   })
   ws.send(cmd)
 }
+
+let turtleX = 0
+
+setInterval(() => {
+  moveTurtle(ws, turtleX)
+  turtleX++
+}, 50)
