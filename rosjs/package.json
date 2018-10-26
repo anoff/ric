@@ -8,6 +8,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "minimist": "^1.2.0",
     "ws": "^6.1.0"
   }
 }
