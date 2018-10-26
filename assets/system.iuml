@@ -1,0 +1,5 @@
+@startuml
+skinparam monochrome true
+node "Robot" as robot
+
+@enduml
