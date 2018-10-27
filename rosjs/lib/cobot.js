@@ -2,7 +2,7 @@
 // functions and events to interact with the cobot
 const EventEmitter = require('events')
 
-const ERROR_MODE = 7
+const ERROR_MODE = 6
 const absoluteJointPoses = [
   [-0.972759544849396, 0.842011630535126, 0.525173485279083, -0.459920525550842, -0.311721533536911, -0.23040871322155, -1.61112463474274],
   [-0.45693451166153, 0.846364200115204, 0.527738392353058, -0.464820146560669, -0.311230331659317, -0.23233450949192, -1.60969400405884],
@@ -19,9 +19,11 @@ class Cobot {
   moveToPose (poseId) {
     const ix = poseId % absoluteJointPoses.length
     this._moveToAbsoluteJointPose(absoluteJointPoses[ix])
+    log.info('MOVE TO', ix)
   }
 
   _moveToAbsoluteJointPose (jointPose) {
+    console.log(jointPose)
     this.ros.call('/festo/cobotv1_1/jog_joints', {
       joint_increment: jointPose,
       velocity_factor: 1.0,
@@ -34,7 +36,18 @@ class Cobot {
   }
 
   resetCollision () {
-    this.ros.call('/festo/cobotv1_1/set_mode', {required_mode: 7, sequence: 0})
+    return new Promise((resolve, reject) => {
+      this.ros.call('/festo/cobotv1_1/set_mode', {required_mode: { mode: 1, sequence: 0 }})
+      setTimeout(() => this.ros.call('/festo/cobotv1_1/set_mode', {required_mode: { mode: 7, sequence: 0 }}), 200)
+      setTimeout(() => {
+        this.ros.call('/festo/cobotv1_1/set_collaboration_mode', {
+          sequence: 0,
+          stiffness_on_collision: 0.4,
+          collision_mode: 2
+        })
+      }, 500)
+      setTimeout(() => resolve(), 800)
+    })
   }
 
   init () {
@@ -48,11 +61,12 @@ class Cobot {
 
     // check for start of collission
     this.ros.subscribe('/festo/cobotv1_1/festo_status', data => {
-      if (data.mode === ERROR_MODE && this.previousMode !== ERROR_MODE) {
-        log.warn('Collision detected', data)
+      const mode = data.msg.mode
+      if (mode === ERROR_MODE && this.previousMode !== ERROR_MODE) {
+        log.warn('Collision detected')
         this.emitter.emit('collision_detected', data)
       }
-      this.previousMode = data.mode
+      this.previousMode = mode
     })
   }
 }

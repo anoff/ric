@@ -21,10 +21,13 @@ ros.ws.on('open', () => {
 
 function init () {
   cobot.init()
-  ros.call('/festo/cobotv1_1/set_collaboration_mode', {
-    sequence: 0,
-    stiffness_on_collision: 0.1,
-    collision_mode: 1
-  })
-  // cobot.resetCollision()
+  ros.call('/festo/cobotv1_1/set_pressure', {
+    'required_pressure': {
+      'sequence': 0,
+      'p1': 1.0,
+      'p2': 0.0,
+      'weight': 0.1
+    }
+  }, {hideCall: true})
+  cobot.resetCollision()
 }

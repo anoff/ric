@@ -41,6 +41,8 @@ class GameState {
         break
       case 'HIT_1':
         this.reactionTimeSum += new Date() - this.poseStartMs
+        clearTimeout(this.hitTimeoutTimer)
+        setTimeout(() => this.continueGame(), 1000)
         break
       case 'MOVE_2':
         this.cobot.moveToPose(1)
@@ -51,6 +53,8 @@ class GameState {
         break
       case 'HIT_2':
         this.reactionTimeSum += new Date() - this.poseStartMs
+        clearTimeout(this.hitTimeoutTimer)
+        setTimeout(() => this.continueGame(), 1000)
         break
       case 'MOVE_3':
         this.cobot.moveToPose(2)
@@ -61,6 +65,8 @@ class GameState {
         break
       case 'HIT_3':
         this.reactionTimeSum += new Date() - this.poseStartMs
+        clearTimeout(this.hitTimeoutTimer)
+        setTimeout(() => this.continueGame(), 1000)
         break
       case 'ERROR':
         log.error('OH FUCK, game over')
@@ -117,6 +123,28 @@ class GameState {
 
       case 'MOVE_3':
         this.transitionState('WAIT_FOR_HIT_3')
+        break
+
+      default:
+        log.warn('Unhandled timeout', {state: this.currentState})
+    }
+  }
+
+  continueGame () {
+    switch (this.currentState) {
+      case 'HIT_1':
+        this.cobot.resetCollision()
+          .then(() => this.transitionState('MOVE_2'))
+        break
+
+      case 'HIT_2':
+        this.cobot.resetCollision()
+          .then(() => this.transitionState('MOVE_3'))
+        break
+
+      case 'HIT_3':
+        this.cobot.resetCollision()
+          .then(() => this.transitionState('STANDBY'))
         break
 
       default:
