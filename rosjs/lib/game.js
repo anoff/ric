@@ -1,4 +1,6 @@
 /* global log */
+const hueService = require('./HueService')
+
 const HIT_TIMEOUT = 10 // s
 class GameState {
   constructor (cobot) {
@@ -30,45 +32,56 @@ class GameState {
   execState () {
     switch (this.currentState) {
       case 'STANDBY':
+        hueService.setLight('on', 'red', 40)
         setTimeout(() => this.transitionState('MOVE_1'), 1000)
         break
       case 'MOVE_1':
+        hueService.setLight('on', 'red', 40)
         this.cobot.moveToPose(0) // lol IT
         break
       case 'WAIT_FOR_HIT_1':
+        hueService.setLight('on', 'green', 30)
         this.startTimeout()
         this.poseStartMs = new Date()
         break
       case 'HIT_1':
+        hueService.setLight('on', 'red', 50)
         this.reactionTimeSum += new Date() - this.poseStartMs
         clearTimeout(this.hitTimeoutTimer)
         setTimeout(() => this.continueGame(), 1000)
         break
       case 'MOVE_2':
+        hueService.setLight('on', 'red', 50)
         this.cobot.moveToPose(1)
         break
       case 'WAIT_FOR_HIT_2':
+        hueService.setLight('on', 'green', 40)
         this.startTimeout()
         this.poseStartMs = new Date()
         break
       case 'HIT_2':
+        hueService.setLight('on', 'red', 40)
         this.reactionTimeSum += new Date() - this.poseStartMs
         clearTimeout(this.hitTimeoutTimer)
         setTimeout(() => this.continueGame(), 1000)
         break
       case 'MOVE_3':
+        hueService.setLight('on', 'red', 40)
         this.cobot.moveToPose(2)
         break
       case 'WAIT_FOR_HIT_3':
+        hueService.setLight('on', 'green', 40)
         this.startTimeout()
         this.poseStartMs = new Date()
         break
       case 'HIT_3':
+        hueService.setLight('on', 'red', 40)
         this.reactionTimeSum += new Date() - this.poseStartMs
         clearTimeout(this.hitTimeoutTimer)
         setTimeout(() => this.continueGame(), 1000)
         break
       case 'ERROR':
+        hueService.setLight('on', 'yellow', 40)
         log.error('OH FUCK, game over')
         break
     }

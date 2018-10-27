@@ -11,7 +11,9 @@
   "dependencies": {
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
+    "hex-rgb": "^3.0.0",
     "minimist": "^1.2.0",
+    "node-hue-api": "^2.4.2",
     "pino": "^5.8.0",
     "socket.io": "^2.1.1",
     "ws": "^6.1.0"
