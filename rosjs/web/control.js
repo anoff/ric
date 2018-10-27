@@ -50,11 +50,11 @@ function buttonHandler (key) {
       break
     case 'arrowright':
     case 'buttonright':
-      stepXYZabc({y: INCREMENT})
+      stepXYZabc({c: INCREMENT})
       break
     case 'arrowleft':
     case 'buttonleft':
-      stepXYZabc({y: -INCREMENT})
+      stepXYZabc({c: -INCREMENT})
       break
   }
 }
