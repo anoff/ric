@@ -1,0 +1,56 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "simulation game",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "StartGameIntent",
+                    "slots": [
+                        {
+                            "name": "option",
+                            "type": "GAME_OPTIONS"
+                        }
+                    ],
+                    "samples": [
+                        "{option}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "GAME_OPTIONS",
+                    "values": [
+                        {
+                            "id": "0",
+                            "name": {
+                                "value": "results"
+                            }
+                        },
+                        {
+                            "id": "1",
+                            "name": {
+                                "value": "start"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
