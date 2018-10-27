@@ -1,20 +1,19 @@
-const WebSocket = require('ws')
 const argv = require('minimist')(process.argv.slice(2))
+const BridgeHandler = require('./lib/bridgeHandler')
+const websocketUrl = 'ws://' + argv.ros_master + ':9090/'
 
-const ws = new WebSocket('ws://' + argv.ros_master + ':9090/')
+const ros = new BridgeHandler(websocketUrl)
 
-ws.on('open', function open () {
+ros.ws.on('open', () => {
   console.log('Connection open')
-  const subscribe = JSON.stringify({
-    'op': 'subscribe',
-    'topic': '/festo/cobotv1_1/festo_status'
-  })
-  // ws.send(subscribe)
+  init()
 })
 
-ws.on('message', function incoming (data) {
-  console.log(data)
-})
+function init () {
+  ros.subscribe('/festo/cobotv1_1/festo_status', data => {
+    if (data.msg.sequence % 10 === 0) console.log(JSON.stringify(data))
+  })
+}
 
 function closeTool (closed) {
   const cmd = JSON.stringify(
@@ -32,13 +31,3 @@ function closeTool (closed) {
   ws.send(cmd)
   console.log(cmd)
 }
-
-process.stdin.on('data', d => {
-  console.log(d)
-})
-
-let status = false
-setInterval(() => {
-  closeTool(status)
-  status = !status
-}, 1000)
