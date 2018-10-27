@@ -50,8 +50,8 @@ class Cobot {
           stiffness_on_collision: 0.4,
           collision_mode: 2
         })
-      }, 500)
-      setTimeout(() => resolve(), 800)
+      }, 400)
+      setTimeout(() => resolve(), 600)
     })
   }
 
@@ -73,6 +73,17 @@ class Cobot {
       }
       this.previousMode = mode
     })
+  }
+
+  openHand (open) {
+    this.ros.call('/festo/cobotv1_1/set_pressure', {
+      'required_pressure': {
+        'sequence': 0,
+        'p1': open ? -1.0 : 1.0,
+        'p2': 0.0,
+        'weight': 0.1
+      }
+    }, {hideCall: false})
   }
 }
 

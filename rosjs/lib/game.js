@@ -18,7 +18,7 @@ class GameState {
     this.cobot = cobot
     cobot.emitter.on('position_reached', event => this.reachedPose())
     cobot.emitter.on('collision_detected', event => this.collisionDetected())
-    this.transitionState('STANDBY')
+    hueService.setLight('off', 'red', 40)
   }
   transitionState (targetState) {
     log.info('State transition', {currentState: this.currentState, targetState})
@@ -32,6 +32,7 @@ class GameState {
   execState () {
     switch (this.currentState) {
       case 'STANDBY':
+        this.cobot.resetCollision()
         hueService.setLight('on', 'red', 40)
         setTimeout(() => this.transitionState('MOVE_1'), 1000)
         break
@@ -157,7 +158,7 @@ class GameState {
 
       case 'HIT_3':
         this.cobot.resetCollision()
-          .then(() => this.transitionState('STANDBY'))
+          .then(() => this.transitionState('ERROR'))
         break
 
       default:
