@@ -10,28 +10,27 @@ const websocketUrl = 'ws://' + argv.ros_master + ':9090/'
 const ros = new BridgeHandler(websocketUrl)
 
 ros.ws.on('open', () => {
-  log.info('Connection open')
+  log.info('ROS connection open')
   init()
 })
 
 function init () {
   server.start()
   server.getSocket().on('connection', socket => {
-    log.info('socket connected')
+    log.info('web app socket connected')
     socket.on('move', data => {
       log.debug('socket move command', data)
-      ros.call('/festo/cobotv1_1/jog_xyzabc', {
-        pose: data,
-        velocity_factor: 0.5,
-        acceleration_factor: 0.5,
-        relative_position: true,
-        coordinate_system: 'TCP',
-        time_factor: 0.5
-      })
+      ros.call('/festo/cobotv1_1/jog_xyzabc', data)
     })
   })
-  ros.subscribe('/festo/cobotv1_1/base_to_tcp_transform', data => {
-    // console.log(JSON.stringify(data))
+  ros.call('/festo/cobotv1_1/set_mode', {required_mode: 7, sequence: 0})
+  ros.call('/festo/cobotv1_1/set_collaboration_mode', {
+    sequence: 0,
+    stiffness_on_collision: 0.1,
+    collision_mode: 1
+  })
+  ros.subscribe('/festo/cobotv1_1/festo_status', data => {
+    log.info(JSON.stringify(data))
   })
 
   let toolClosed = true
