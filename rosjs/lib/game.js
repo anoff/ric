@@ -9,14 +9,18 @@ class GameState {
       'ERROR'
     ]
 
-    this.transitionState('STANDBY')
+    this.currentState = null
     this.reactionTimeSum = 0
     this.poseStartMs = null
     this.hitTimeoutTimer = null
     this.cobot = cobot
+    cobot.emitter.on('position_reached', event => this.reachedPose())
+    cobot.emitter.on('collision_detected', event => this.collisionDetected())
+    this.transitionState('STANDBY')
   }
   transitionState (targetState) {
-    this.transitionState(targetState)
+    log.info('State transition', {currentState: this.currentState, targetState})
+    this.currentState = targetState
     this.execState()
   }
   startTimeout () {
@@ -26,6 +30,7 @@ class GameState {
   execState () {
     switch (this.currentState) {
       case 'STANDBY':
+        setTimeout(() => this.transitionState('MOVE_1'), 1000)
         break
       case 'MOVE_1':
         this.cobot.moveToPose(0) // lol IT
@@ -57,10 +62,13 @@ class GameState {
       case 'HIT_3':
         this.reactionTimeSum += new Date() - this.poseStartMs
         break
+      case 'ERROR':
+        log.error('OH FUCK, game over')
+        break
     }
   }
   // events
-  collissionDetected () {
+  collisionDetected () {
     switch (this.currentState) {
       case 'WAIT_FOR_HIT_1':
         this.transitionState('HIT_1')
@@ -93,7 +101,7 @@ class GameState {
         break
 
       default:
-        console.log('Unhandled timeout', {state: this.currentState})
+        log.info('Unhandled timeout', {state: this.currentState})
     }
   }
 

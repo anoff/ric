@@ -1,5 +1,8 @@
+/* global log */
 // functions and events to interact with the cobot
+const EventEmitter = require('events')
 
+const ERROR_MODE = 7
 const absoluteJointPoses = [
   [-0.972759544849396, 0.842011630535126, 0.525173485279083, -0.459920525550842, -0.311721533536911, -0.23040871322155, -1.61112463474274],
   [-0.45693451166153, 0.846364200115204, 0.527738392353058, -0.464820146560669, -0.311230331659317, -0.23233450949192, -1.60969400405884],
@@ -9,11 +12,13 @@ const absoluteJointPoses = [
 class Cobot {
   constructor (ros) {
     this.ros = ros
+    this.emitter = new EventEmitter()
+    this.previousMode = null
   }
 
   moveToPose (poseId) {
     const ix = poseId % absoluteJointPoses.length
-    this.moveToAbsoluteJointPose(absoluteJointPoses[ix])
+    this._moveToAbsoluteJointPose(absoluteJointPoses[ix])
   }
 
   _moveToAbsoluteJointPose (jointPose) {
@@ -29,11 +34,25 @@ class Cobot {
   }
 
   resetCollision () {
-    this.ros.call('/festo/cobotv1_1/set_mode', {
-      sequence: 0,
-      required_mode: 7
-    }, {
-      hideCall: false
+    this.ros.call('/festo/cobotv1_1/set_mode', {required_mode: 7, sequence: 0})
+  }
+
+  init () {
+    // bind to reached position responses and fire event
+    this.ros.ws.addEventListener('message', d => {
+      d = JSON.parse(d.data)
+      if (d.op === 'service_response' && d.service === '/festo/cobotv1_1/jog_joints' && d.values.position_reached) {
+        this.emitter.emit('position_reached', d)
+      }
+    })
+
+    // check for start of collission
+    this.ros.subscribe('/festo/cobotv1_1/festo_status', data => {
+      if (data.mode === ERROR_MODE && this.previousMode !== ERROR_MODE) {
+        log.warn('Collision detected', data)
+        this.emitter.emit('collision_detected', data)
+      }
+      this.previousMode = data.mode
     })
   }
 }
