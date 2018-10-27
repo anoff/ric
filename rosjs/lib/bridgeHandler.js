@@ -6,15 +6,6 @@ class BridgeHandler {
     this.events = {}
   }
 
-  registerEvent (eventName, fn) {
-    if (this.events[eventName]) {
-      this.events[eventName].push(fn)
-    } else {
-      this.events[eventName] = [fn]
-      this._addEventListener(eventName)
-    }
-  }
-
   send (cmd) {
     this.ws.send(JSON.stringify(cmd))
   }
@@ -24,17 +15,9 @@ class BridgeHandler {
       'op': 'subscribe',
       'topic': topic
     })
-    this.registerEvent('message', data => {
-      data = JSON.parse(data)
+    this.ws.addEventListener('message', data => {
+      data = JSON.parse(data.data)
       if (data.topic === topic) handlerFn(data)
-    })
-  }
-
-  _addEventListener (eventName) {
-    this.ws.on(eventName, data => {
-      for (const fn of this.events[eventName]) {
-        fn(data)
-      }
     })
   }
 }
