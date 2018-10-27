@@ -3,7 +3,7 @@ const hue = require('node-hue-api')
 const HueApi = hue.HueApi
 const lightState = hue.lightState
 
-const host = '172.16.4.1'
+const host = '192.168.4.220'
 const username = '1jKNLVJMfXVnfAa16EBROviTmV-wfO1iF5thYW0N'
 const api = new HueApi(host, username)
 
