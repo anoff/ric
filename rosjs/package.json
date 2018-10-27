@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js --ros_master 192.168.56.101 | pino-pretty"
   },
   "private": true,
   "license": "MIT",
   "dependencies": {
     "minimist": "^1.2.0",
+    "pino": "^5.8.0",
     "ws": "^6.1.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^2.2.2"
   }
 }

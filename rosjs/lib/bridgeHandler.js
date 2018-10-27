@@ -1,9 +1,17 @@
+/* global log */
 const WebSocket = require('ws')
 
 class BridgeHandler {
-  constructor (url) {
+  constructor (url, opts = {}) {
     this.ws = new WebSocket(url)
-    this.events = {}
+    this.showServiceResponse = opts.showServiceResponse !== undefined ? opts.showServiceResponse : true
+
+    this.ws.addEventListener('message', d => {
+      d = JSON.parse(d.data)
+      if (d.op === 'service_response' && this.showServiceResponse) {
+        log.info(`SRV_RESPONSE(${d.service})=${d.result ? 'OK' : 'NOK'}: ${JSON.stringify(d.values)}`)
+      }
+    })
   }
 
   send (cmd) {
@@ -19,6 +27,16 @@ class BridgeHandler {
       data = JSON.parse(data.data)
       if (data.topic === topic) handlerFn(data)
     })
+  }
+
+  call (service, args) {
+    const cmd = JSON.stringify(
+      { 'op': 'call_service',
+        'service': service,
+        'args': args
+      })
+    this.ws.send(cmd)
+    log.info(`SRV_CALL(${service}): ${JSON.stringify(args)}`)
   }
 }
 
