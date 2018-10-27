@@ -14,16 +14,26 @@ ros.ws.on('open', () => {
 })
 
 function init () {
-  /*
-  ros.subscribe('/festo/cobotv1_1/festo_status', data => {
-    if (data.msg.sequence % 10 === 0) console.log(JSON.stringify(data))
+  ros.subscribe('/festo/cobotv1_1/base_to_tcp_transform', data => {
+    // console.log(JSON.stringify(data))
   })
-  */
+
   let toolClosed = true
   setInterval(() => {
-    closeTool(toolClosed)
+    // closeTool(toolClosed)
     toolClosed = !toolClosed
-  }, 1000)
+    ros.call('/festo/cobotv1_1/jog_xyzabc', {
+      pose: {
+        position: {x: 0.0, y: 0.0, z: 0.0},
+        orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}
+      },
+      velocity_factor: 0.5,
+      acceleration_factor: 0.5,
+      relative_position: false,
+      coordinate_system: 'TCP',
+      time_factor: 0.5
+    })
+  }, 3000)
 }
 
 function closeTool (closed) {
@@ -34,5 +44,5 @@ function closeTool (closed) {
       'p2': 0.0,
       'weight': 0.1
     }
-  })
+  }, {hideCall: true})
 }

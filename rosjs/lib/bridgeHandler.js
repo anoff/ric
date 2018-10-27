@@ -29,14 +29,16 @@ class BridgeHandler {
     })
   }
 
-  call (service, args) {
+  call (service, args, opts = {}) {
     const cmd = JSON.stringify(
       { 'op': 'call_service',
         'service': service,
         'args': args
       })
     this.ws.send(cmd)
-    log.info(`SRV_CALL(${service}): ${JSON.stringify(args)}`)
+    if (!opts.hideCall) {
+      log.info(`SRV_CALL(${service}): ${JSON.stringify(args)}`)
+    }
   }
 }
 
