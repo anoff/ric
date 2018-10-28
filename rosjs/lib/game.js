@@ -165,6 +165,10 @@ class GameState {
         log.warn('Unhandled timeout', {state: this.currentState})
     }
   }
+
+  safetyNetExited () {
+
+  }
 }
 
 module.exports = GameState

@@ -33,3 +33,9 @@ server.emitter.on('start_game', d => {
     game.transitionState('STANDBY')
   }
 })
+
+server.emitter.on('safety_net', d => {
+  if (d.state === 'exited') {
+    game.safetyNetExited()
+  }
+})

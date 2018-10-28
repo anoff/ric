@@ -9,6 +9,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
     "hex-rgb": "^3.0.0",
