@@ -2,11 +2,18 @@
 const pino = require('pino')
 const minimist = require('minimist')
 const BridgeHandler = require('./lib/bridgeHandler')
+const Cobot = require('./lib/cobot')
+const GameState = require('./lib/game')
+const server = require('./lib/server')
 
 const argv = minimist(process.argv.slice(2))
 global.log = pino()
 const websocketUrl = 'ws://' + argv.ros_master + ':9090/'
-const ros = new BridgeHandler(websocketUrl)
+const ros = new BridgeHandler(websocketUrl, {
+  showServiceResponse: true
+})
+const cobot = new Cobot(ros)
+const game = new GameState(cobot)
 
 ros.ws.on('open', () => {
   log.info('Connection open')
@@ -14,35 +21,21 @@ ros.ws.on('open', () => {
 })
 
 function init () {
-  ros.subscribe('/festo/cobotv1_1/base_to_tcp_transform', data => {
-    // console.log(JSON.stringify(data))
-  })
-
-  let toolClosed = true
-  setInterval(() => {
-    // closeTool(toolClosed)
-    toolClosed = !toolClosed
-    ros.call('/festo/cobotv1_1/jog_xyzabc', {
-      pose: {
-        position: {x: 0.0, y: 0.0, z: 0.0},
-        orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}
-      },
-      velocity_factor: 0.5,
-      acceleration_factor: 0.5,
-      relative_position: false,
-      coordinate_system: 'TCP',
-      time_factor: 0.5
-    })
-  }, 3000)
+  server.start()
+  cobot.init()
+  cobot.openHand(false)
+  cobot.resetCollision()
 }
 
-function closeTool (closed) {
-  ros.call('/festo/cobotv1_1/set_pressure', {
-    'required_pressure': {
-      'sequence': 0,
-      'p1': closed ? 1.0 : -1.0,
-      'p2': 0.0,
-      'weight': 0.1
-    }
-  }, {hideCall: true})
-}
+server.emitter.on('start_game', d => {
+  if (game.currentState === 'ERROR' || !game.currentState) {
+    log.info('STARTING GAME')
+    game.transitionState('STANDBY')
+  }
+})
+
+server.emitter.on('safety_net', d => {
+  if (d.state === 'exited') {
+    game.safetyNetExited()
+  }
+})

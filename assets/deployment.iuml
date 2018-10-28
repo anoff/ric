@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam defaulttextalignment center
+scale 4
+
+node "Bionic\nCobot" as robot
+node "Motion\nTerminal" as vtem
+node "Robot Server" as ros
+
+node "Control Server" as cs
+node "Referee Server" as referee
+node "LiDAR" as lidar
+node "Amazon\nAlexa" as alexa
+node "Amazon\nWeb Services" as aws
+
+lidar -up- referee: Serial
+robot -up- vtem: pneumatic
+vtem -up- ros: LAN
+
+cs -down- aws: HTTP\nWAN
+alexa -up- aws: WAN
+
+cs -left- ros: WebSockets\nLAN
+cs - referee: HTTP\nLAN
+
+@enduml
