@@ -1,7 +1,7 @@
 @startuml deployment
 skinparam monochrome true
 skinparam defaulttextalignment center
-scale 4
+scale 3
 
 node "Bionic\nCobot" as robot
 node "Motion\nTerminal" as vtem
