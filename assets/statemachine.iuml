@@ -1,0 +1,30 @@
+@startuml statemachine
+skinparam monochrome true
+
+state Inactive {
+  Standby : turn Hue off
+}
+
+[*] --> Standby
+
+state Game {
+  state Step {
+    MOVE: Move robot to pose
+    MOVE: Turn Hue=red
+
+    WAIT_FOR_HIT : Turn Hue=green
+    HIT --> CONT : Player leaves game area (Referee/LiDAR)
+
+    MOVE --> WAIT_FOR_HIT : End position reached (ROS)
+    WAIT_FOR_HIT --> HIT : Collision detected (ROS)
+    CONT --> MOVE : For 3 cycles
+  }
+  END : Turn Hue=yellow
+  CONT --> END : after 3 cycles
+  [*] --> Step
+  Standby --> Game : Alexa start command received
+
+  ERROR : ??
+}
+
+@enduml
