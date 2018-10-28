@@ -26,7 +26,7 @@
 
 See R.I.C. in action:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/lkPGenAMyrg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+[![R.I.C. Demo](https://img.youtube.com/vi/lkPGenAMyrg/0.jpg)](https://www.youtube.com/watch?v=lkPGenAMyrg)
 
 ## Architecture
 
