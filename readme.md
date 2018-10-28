@@ -26,7 +26,7 @@
 
 See R.I.C. in action:
 
-> Embed youtube link
+[![R.I.C. Demo](https://img.youtube.com/vi/lkPGenAMyrg/0.jpg)](https://www.youtube.com/watch?v=lkPGenAMyrg)
 
 ## Architecture
 
