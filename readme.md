@@ -7,7 +7,9 @@
 - [Architecture](#architecture)
   - [System overview](#system-overview)
   - [ROS interaction](#ros-interaction)
+  - [Game Design](#game-design)
 - [Usage](#usage)
+  - [Cobot](#cobot)
 - [✏️ authors](#-authors)
 - [⚖️ License](#-license)
 
@@ -35,9 +37,19 @@ For developing the `Control Server` Festo provided a Virtual Machine with a Cobo
 
 ![Development](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/anoff/ric/master/assets/system.iuml)
 
+### Game Design
+
+The following shows the games state machine. The implementation can be found under [rosjs/lib/game.js](rosjs/lib/game.js).
+
+![Game Statemachine](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/anoff/ric/master/assets/statemachine.iuml)
+
 ## Usage
 
 `$ node rosjs/index.js --ros_master <ros_master_ip>`
+
+### Cobot
+
+The Cobot is running V1.1 and a modified pressure regulation on the VTEM which allows R.I.C. to detect collissions earlier on without going into failure mode.
 
 ## ✏️ authors
 
