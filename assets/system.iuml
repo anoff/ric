@@ -1,4 +1,4 @@
-@startuml
+@startuml dev
 skinparam monochrome true
 
 node "Robot" as robot
