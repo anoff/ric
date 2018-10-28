@@ -13,6 +13,7 @@ state Game {
     MOVE: Turn Hue=red
 
     WAIT_FOR_HIT : Turn Hue=green
+    CONT : Reset collission
     HIT --> CONT : Player leaves game area (Referee/LiDAR)
 
     MOVE --> WAIT_FOR_HIT : End position reached (ROS)

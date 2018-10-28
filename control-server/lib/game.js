@@ -1,14 +1,15 @@
 /* global log */
 const hueService = require('./HueService')
+const DISABLE_LIDAR = true // do not wait for lidar to transition into CONT state
 
 const HIT_TIMEOUT = 10 // s
 class GameState {
   constructor (cobot) {
     this.states = ['STANDBY',
-      'MOVE_1', 'WAIT_FOR_HIT_1', 'HIT_1',
-      'MOVE_2', 'WAIT_FOR_HIT_2', 'HIT_2',
-      'MOVE_3', 'WAIT_FOR_HIT_3', 'HIT_3',
-      'ERROR'
+      'MOVE_1', 'WAIT_FOR_HIT_1', 'HIT_1', 'CONT_1',
+      'MOVE_2', 'WAIT_FOR_HIT_2', 'HIT_2', 'CONT_2',
+      'MOVE_3', 'WAIT_FOR_HIT_3', 'HIT_3', 'CONT_3',
+      'ERROR', 'END'
     ]
 
     this.currentState = null
@@ -24,6 +25,11 @@ class GameState {
     log.info('State transition', {currentState: this.currentState, targetState})
     this.currentState = targetState
     this.execState()
+  }
+  mockSafetyNet () {
+    if (DISABLE_LIDAR) {
+      setTimeout(() => this.safetyNetExited(), 2000)
+    }
   }
   startTimeout () {
     this.hitTimeoutTimer = setTimeout(() => this.timeoutDetected(this.currentState), HIT_TIMEOUT * 1000) // s -> ms
@@ -49,7 +55,11 @@ class GameState {
         hueService.setLight('on', 'red', 50)
         this.reactionTimeSum += new Date() - this.poseStartMs
         clearTimeout(this.hitTimeoutTimer)
-        setTimeout(() => this.continueGame(), 1000)
+        this.mockSafetyNet() // use mock instead of LiDAR if disabled
+        break
+      case 'CONT_1':
+        this.cobot.resetCollision()
+          .then(() => this.transitionState('MOVE_2'))
         break
       case 'MOVE_2':
         hueService.setLight('on', 'red', 50)
@@ -64,7 +74,11 @@ class GameState {
         hueService.setLight('on', 'red', 40)
         this.reactionTimeSum += new Date() - this.poseStartMs
         clearTimeout(this.hitTimeoutTimer)
-        setTimeout(() => this.continueGame(), 1000)
+        this.mockSafetyNet() // use mock instead of LiDAR if disabled
+        break
+      case 'CONT_2':
+        this.cobot.resetCollision()
+          .then(() => this.transitionState('MOVE_3'))
         break
       case 'MOVE_3':
         hueService.setLight('on', 'red', 40)
@@ -79,11 +93,19 @@ class GameState {
         hueService.setLight('on', 'red', 40)
         this.reactionTimeSum += new Date() - this.poseStartMs
         clearTimeout(this.hitTimeoutTimer)
-        setTimeout(() => this.continueGame(), 1000)
+        this.mockSafetyNet() // use mock instead of LiDAR if disabled
+        break
+      case 'CONT_3':
+        this.cobot.resetCollision()
+          .then(() => this.transitionState('END'))
+        break
+      case 'END':
+        hueService.setLight('on', 'yellow', 40)
+        log.info('GAME ENDED')
         break
       case 'ERROR':
-        hueService.setLight('on', 'yellow', 40)
-        log.error('OH FUCK, game over')
+        hueService.setLight('on', 'purple', 40)
+        log.error('Something went wrong')
         break
     }
   }
@@ -144,30 +166,23 @@ class GameState {
     }
   }
 
-  continueGame () {
+  safetyNetExited () {
     switch (this.currentState) {
       case 'HIT_1':
-        this.cobot.resetCollision()
-          .then(() => this.transitionState('MOVE_2'))
+        this.transitionState('CONT_1')
         break
 
       case 'HIT_2':
-        this.cobot.resetCollision()
-          .then(() => this.transitionState('MOVE_3'))
+        this.transitionState('CONT_2')
         break
 
       case 'HIT_3':
-        this.cobot.resetCollision()
-          .then(() => this.transitionState('ERROR'))
+        this.transitionState('CONT_3')
         break
 
       default:
         log.warn('Unhandled timeout', {state: this.currentState})
     }
-  }
-
-  safetyNetExited () {
-
   }
 }
 
