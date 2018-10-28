@@ -4,16 +4,29 @@
 
 <!-- TOC depthFrom:2 -->
 
+- [Demo](#demo)
 - [Architecture](#architecture)
   - [System overview](#system-overview)
   - [ROS interaction](#ros-interaction)
   - [Game Design](#game-design)
+- [Installation](#installation)
+  - [Referee Server](#referee-server)
+  - [Control Server](#control-server)
+  - [Alexa](#alexa)
 - [Usage](#usage)
+  - [Referee Server](#referee-server-1)
+  - [Control Server](#control-server-1)
   - [Cobot](#cobot)
 - [✏️ authors](#-authors)
 - [⚖️ License](#-license)
 
 <!-- /TOC -->
+
+## Demo
+
+See R.I.C. in action:
+
+> Embed youtube link
 
 ## Architecture
 
@@ -27,7 +40,7 @@
 |Motion Terminal|Fest VTEM module for transforming ROS commands into pneumatic pressure at the robot joints|
 |Bionic Cobot|Festo humanoid robot arm|
 |Control Server|Runs Node.js to control the game flow via state machine and interact with the robot server via ROS bridge messages|
-|Referee Server/LiDAR|Creates a virtual wall using the LiDAR to make sure players do not enter the game area before the game starts|
+|Referee Server/LiDAR|Placed Vertically in front of our R.I.C. System, the referee measures the reaction time and also makes sure that the next iteration of the game will only be started once the players hand is completely removed from the game area.|
 |Amazon Alexa|Natural speech interface to start the R.I.C. via `Alexa start RIC [ric]` and get results of the last game|
 |Amazon Web Services|The backend running the Alexa program and sotring the game scores|
 
@@ -43,9 +56,45 @@ The following shows the games state machine. The implementation can be found und
 
 ![Game Statemachine](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/anoff/ric/master/assets/statemachine.iuml)
 
+## Installation
+
+### Referee Server
+> Note: In order to discover the RPLIDAR sensor on your COM ports, you need to install the driver.   
+[Download the driver from here](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers)
+
+Install dependencies using:
+
+```
+pip install rplidar requests numpy
+```
+
+### Control Server
+
+Install the NPM dependencies using
+
+```sh
+cd control-server
+npm install
+```
+
+### Alexa
+
+Publish the Skill available in `/alexa` to a development account connected with our local Alexa device.
+
 ## Usage
 
-`$ node rosjs/index.js --ros_master <ros_master_ip>`
+### Referee Server
+
+Start the referee server using
+
+`$ python referee-server/lidar_referee.py`
+
+
+### Control Server
+
+Start the control server using
+
+`$ node control-server/index.js --ros_master <ros_master_ip>`
 
 ### Cobot
 
