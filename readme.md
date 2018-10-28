@@ -102,12 +102,21 @@ The Cobot is running V1.1 and a modified pressure regulation on the VTEM which a
 
 ## ✏️ authors
 
+* Simone Spiegler
+  * [Twitter](https://twitter.com/simone_spiegler)
+* Frederik Held
+  * [Github](http://github.com/frederikheld)
+  * [Twitter](https://twitter.com/frederikheld)
+  * [Website](https://frederikheld.de)
 * Tim Großmann
   * [Github](http://github.com/timgrossmann)
   * [Twitter](https://twitter.com/timigrossmann)
 * Andreas Offenhaeuser
-  * [Website](http://anoff.io)
+  * [Github](http://github.com/anoff)
+  * [Website](https://anoff.io)
   * [Twitter](https://twitter.com/an0xff)
+* Patrick Bunda
+  * [Github](http://github.com/paddybun)
 
 ## ⚖️ License
 
