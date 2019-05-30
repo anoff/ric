@@ -2,6 +2,8 @@
 
 > The personal Robot Interaction Companion
 
+🚨 Please be aware that this code is not maintained and may contain vulnerable packages 🚨
+
 <!-- TOC depthFrom:2 -->
 
 - [Demo](#demo)
